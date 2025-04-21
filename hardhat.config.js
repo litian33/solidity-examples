@@ -25,14 +25,23 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 module.exports = {
   solidity: "0.8.9",
   networks: {
-    goerli: {
-      url: `https://eth-goerli.alchemyapi.io/v2/${process.env.ETH_GOERLI_ALCHEMY_API_KEY}`,
-      accounts: [DEPLOYER_PRIVATE_KEY],
+    juSolo: {
+      url: "http://192.168.8.18:8545", 
+      accounts: [process.env.PRIVATE_KEY], 
+      gasPrice:2000000007
     },
-    mumbai: {
-      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.POLYGON_MUMBAI_ALCHEMY_API_KEY}`,
-      accounts: [DEPLOYER_PRIVATE_KEY],
+    juLocal: {
+      url: "http://192.168.8.14:8545", 
+      accounts: [process.env.PRIVATE_KEY], 
     },
+    juDev: {
+        url: "http://47.236.98.58:8545", 
+        accounts: [process.env.PRIVATE_KEY], 
+    },
+    juTest: {
+      url: "https://testnet-rpc.juchain.org", 
+      accounts: [process.env.PRIVATE_KEY], 
+  },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,

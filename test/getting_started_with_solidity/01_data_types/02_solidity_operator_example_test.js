@@ -13,7 +13,9 @@ describe("Getting Started with Solidity / Data Types / SolidityOperatorExample",
   });
 
   it("Should be able to verify all variable values", async function () {
-    await contract.getResults();
+    // 这个是对原测试方法的改进，确认交易被打包执行之后再判断结果
+    const tx = await contract.getResults();
+    await tx.wait();
 
     expect(await contract.variable_add()).to.equal(95);
     expect(await contract.variable_sub()).to.equal(20);

@@ -19,6 +19,11 @@ describe("Getting Started with Solidity / Variables", function () {
 
     [owner] = await ethers.getSigners();
     expect(await contract.getSenderOfTransaction()).to.equal(owner.address);
-    expect(await contract.getChainId()).to.equal(31337);
+
+    // 获取真实的chainid
+    const provider = ethers.provider;
+    const network = await provider.getNetwork();
+    const chainId = network.chainId;
+    expect(await contract.getChainId()).to.equal(chainId);
   });
 });
