@@ -11,24 +11,31 @@ const { ethers } = require("ethers");
  */
 module.exports = {
   solidity: "0.8.9",
-  defaultNetwork:"juSolo",
+  defaultNetwork:"juLocal",
+    // 配置 Mocha 测试框架参数
+  mocha: {
+    timeout: 120000 // 设置全局测试超时为 120 秒
+  },
   networks: {
     juSolo: {
       url: "http://192.168.8.18:8545", 
       accounts: process.env.PRIVATE_KEYS ? process.env.PRIVATE_KEYS.split(',') : [], 
-      gasPrice:2000000007
+      gasPrice:1100000000
     },
     juLocal: {
       url: "http://192.168.8.14:8545", 
-      accounts: process.env.PRIVATE_KEYS ? process.env.PRIVATE_KEYS.split(',') : []
+      accounts: process.env.PRIVATE_KEYS ? process.env.PRIVATE_KEYS.split(',') : [],
+      gasPrice:1100000000
     },
     juDev: {
         url: "http://47.236.98.58:8545", 
-        accounts: process.env.PRIVATE_KEYS ? process.env.PRIVATE_KEYS.split(',') : []
+        accounts: process.env.PRIVATE_KEYS ? process.env.PRIVATE_KEYS.split(',') : [],
+        gasPrice:1100000000
     },
     juTest: {
       url: "https://testnet-rpc.juchain.org", 
-      accounts: process.env.PRIVATE_KEYS ? process.env.PRIVATE_KEYS.split(',') : []
+      accounts: process.env.PRIVATE_KEYS ? process.env.PRIVATE_KEYS.split(',') : [],
+      gasPrice:1100000000
   },
   },
   etherscan: {
