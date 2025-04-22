@@ -16,15 +16,18 @@ describe("Sample Apps / Shared Wallet", function () {
   });
 
   it("Should be able to add or remove an owner of shared wallet ", async function () {
-    await contract.addOwner(signer1.address);
-    await contract.removeOwner(signer1.address);
+    let tx=await contract.addOwner(signer1.address);
+    await tx.wait();
+    tx=await contract.removeOwner(signer1.address);
+    await tx.wait();
   });
 
   it("Should be able to deposit fund", async function () {
-    await signer1.sendTransaction({
+    let tx=await signer1.sendTransaction({
       to: contract.address,
       value: ethers.utils.parseEther("1"),
     });
+    await tx.wait();
 
     expect(await contract.provider.getBalance(contract.address)).to.equal(
       ethers.utils.parseEther("1")
@@ -32,13 +35,16 @@ describe("Sample Apps / Shared Wallet", function () {
   });
 
   it("Should be able to withdraw fund", async function () {
-    await contract.addOwner(signer1.address);
-    await signer1.sendTransaction({
+    let tx=await contract.addOwner(signer1.address);
+    await tx.wait();
+    tx=await signer1.sendTransaction({
       to: contract.address,
       value: ethers.utils.parseEther("1"),
     });
+    await tx.wait();
 
-    await contract.withdraw(ethers.utils.parseEther("0.5"));
+    tx=await contract.withdraw(ethers.utils.parseEther("0.5"));
+    await tx.wait();
     expect(await contract.provider.getBalance(contract.address)).to.equal(
       ethers.utils.parseEther("0.5")
     );
@@ -49,14 +55,17 @@ describe("Sample Apps / Shared Wallet", function () {
   });
 
   it("Should be able to transfer fund to another address", async function () {
-    await contract.addOwner(signer1.address);
-    await signer1.sendTransaction({
+    let tx=await contract.addOwner(signer1.address);
+    await tx.wait();
+    tx=await signer1.sendTransaction({
       to: contract.address,
       value: ethers.utils.parseEther("1"),
     });
+    await tx.wait();
 
     const previousBalance = await signer2.getBalance();
-    await contract.connect(signer1).transferTo(signer2.address, ethers.utils.parseEther("0.5"));
+    tx=await contract.connect(signer1).transferTo(signer2.address, ethers.utils.parseEther("0.5"));
+    await tx.wait();
     expect(await signer2.getBalance()).to.equal(
       previousBalance.add(ethers.utils.parseEther("0.5"))
     );

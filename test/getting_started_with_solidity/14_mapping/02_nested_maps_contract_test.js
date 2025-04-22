@@ -14,13 +14,16 @@ describe("Getting Started with Solidity / Mapping / NestedMapsContract", functio
 
   it("Should be able to verify all variable values", async function () {
     let [owner, spender1, spender2] = await ethers.getSigners();
-    await contract.set(owner.address, spender1.address, 5);
-    await contract.set(owner.address, spender2.address, 10);
+    var tx=await contract.set(owner.address, spender1.address, 5);
+    await tx.wait();
+    tx=await contract.set(owner.address, spender2.address, 10);
+    await tx.wait();
 
     expect(await contract.get(owner.address, spender1.address)).to.equal(5);
     expect(await contract.get(owner.address, spender2.address)).to.equal(10);
 
-    await contract.remove(owner.address, spender2.address);
+    tx=await contract.remove(owner.address, spender2.address);
+    await tx.wait();
     expect(await contract.get(owner.address, spender1.address)).to.equal(5);
     expect(await contract.get(owner.address, spender2.address)).to.equal(0);
   });

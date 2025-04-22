@@ -16,14 +16,17 @@ describe("Sample Apps / Address Book", function () {
   });
 
   it("Should be able to verify all variable values", async function () {
-    await contract.addContact(contact1.address, "john");
-    await contract.addContact(contact2.address, "ali");
+    let tx=await contract.addContact(contact1.address, "john");
+    await tx.wait();
+    tx=await contract.addContact(contact2.address, "ali");
+    await tx.wait();
 
     expect(await contract.getContacts()).to.eql([contact1.address, contact2.address]);
     expect(await contract.getAlias(contact1.address)).to.equal("john");
     expect(await contract.getAlias(contact2.address)).to.equal("ali");
 
-    await contract.removeContact(contact1.address);
+    tx=await contract.removeContact(contact1.address);
+    await tx.wait();
     expect(await contract.getContacts()).to.eql([contact2.address]);
     expect(await contract.getAlias(contact1.address)).to.equal("");
     expect(await contract.getAlias(contact2.address)).to.equal("ali");

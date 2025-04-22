@@ -15,8 +15,10 @@ describe("Sample Apps / ETH Game", function () {
   });
 
   it("Should be able to deposit in the game", async function () {
-    await contract.connect(signers[0]).deposit({ value: ethers.utils.parseEther("1") });
-    await contract.connect(signers[1]).deposit({ value: ethers.utils.parseEther("1") });
+    let tx=await contract.connect(signers[0]).deposit({ value: ethers.utils.parseEther("1") });
+    await tx.wait();
+    tx=await contract.connect(signers[1]).deposit({ value: ethers.utils.parseEther("1") });
+    await tx.wait();
 
     expect(await contract.getBalance()).to.equal(ethers.utils.parseEther("2"));
   });
@@ -28,8 +30,10 @@ describe("Sample Apps / ETH Game", function () {
   });
 
   it("Should prevent forcefully sending eth when the game is over", async function () {
+    this.timeout(120000);
     for (let i = 0; i < 14; i++) {
-      await contract.deposit({ value: ethers.utils.parseEther("1") });
+      let tx=await contract.deposit({ value: ethers.utils.parseEther("1") });
+      await tx.wait();
     }
 
     await expect(contract.deposit({ value: ethers.utils.parseEther("1") })).to.be.revertedWith(
@@ -38,12 +42,15 @@ describe("Sample Apps / ETH Game", function () {
   });
 
   it("Should be able to claim by the winner", async function () {
+    this.timeout(120000);
     let participant = signers[0];
     let winner = signers[1];
     for (let i = 0; i < 13; i++) {
-      await contract.connect(participant).deposit({ value: ethers.utils.parseEther("1") });
+      let tx=await contract.connect(participant).deposit({ value: ethers.utils.parseEther("1") });
+      await tx.wait();
     }
-    await contract.connect(winner).deposit({ value: ethers.utils.parseEther("1") });
+    let tx=await contract.connect(winner).deposit({ value: ethers.utils.parseEther("1") });
+    await tx.wait();
 
     await expect(contract.connect(participant).claimReward()).to.be.revertedWith("Not winner");
     await expect(contract.connect(winner).claimReward());

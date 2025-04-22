@@ -30,24 +30,28 @@ describe("Sample Apps / My ERC20 Token", function () {
     expect(await contract.balanceOf(signer1.address)).to.equal(ethers.utils.parseEther("1"));
 
     // Failed to transfer because signer1 does not have enough balance
-    await contract.connect(signer1).transfer(signer2.address, ethers.utils.parseEther("2"));
+    let tx=await contract.connect(signer1).transfer(signer2.address, ethers.utils.parseEther("2"));
+    await tx.wait();
     expect(await contract.balanceOf(signer1.address)).to.equal(ethers.utils.parseEther("1"));
     expect(await contract.balanceOf(signer2.address)).to.equal(ethers.utils.parseEther("0"));
 
-    await contract.connect(signer1).transfer(signer2.address, ethers.utils.parseEther("0.1"));
+    tx=await contract.connect(signer1).transfer(signer2.address, ethers.utils.parseEther("0.1"));
+    await tx.wait();
     expect(await contract.balanceOf(signer1.address)).to.equal(ethers.utils.parseEther("0.9"));
     expect(await contract.balanceOf(signer2.address)).to.equal(ethers.utils.parseEther("0.1"));
   });
 
   it("Should be able to allow third party to transfer on behalf", async function () {
-    await contract.approve(signer1.address, ethers.utils.parseEther("1"));
+    let tx=await contract.approve(signer1.address, ethers.utils.parseEther("1"));
+    await tx.wait();
     expect(await contract.allowance(owner.address, signer1.address)).to.equal(
       ethers.utils.parseEther("1")
     );
 
-    await contract
+    tx=await contract
       .connect(signer1)
       .transferFrom(owner.address, signer2.address, ethers.utils.parseEther("1"));
+    await tx.wait();
     expect(await contract.balanceOf(signer2.address)).to.equal(ethers.utils.parseEther("1"));
   });
 });

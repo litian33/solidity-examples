@@ -35,13 +35,16 @@ describe("Sample Apps / Token Swap", function () {
   });
 
   it("Should be able to swap between two tokens", async function () {
-    await abcContract.approve(contract.address, ethers.utils.parseEther("100"));
-    await xyzContract.approve(contract.address, ethers.utils.parseEther("100"));
+    let tx=await abcContract.approve(contract.address, ethers.utils.parseEther("100"));
+    await tx.wait();
+    tx=await xyzContract.approve(contract.address, ethers.utils.parseEther("100"));
+    await tx.wait();
 
-    await contract.connect(signer1).swap(
+    tx=await contract.connect(signer1).swap(
       ethers.utils.parseEther("1"), // amount in ABC token
       ethers.utils.parseEther("2") // amount in XYZ token
     );
+    await tx.wait();
 
     expect(await abcContract.balanceOf(signer1.address)).to.equal(ethers.utils.parseEther("99"));
     expect(await abcContract.balanceOf(signer2.address)).to.equal(ethers.utils.parseEther("1"));

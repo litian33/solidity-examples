@@ -15,8 +15,10 @@ describe("Road to Web3 / Week 01 / NFT Tokens", function () {
   it("Should be able to mint NFT tokens", async function () {
     let [account1, account2] = await ethers.getSigners();
 
-    await contract.safeMint(account1.address, "http://example.com/metadata1.json");
-    await contract.safeMint(account2.address, "http://example.com/metadata2.json");
+    var tx=await contract.safeMint(account1.address, "http://example.com/metadata1.json");
+    await tx.wait();
+    tx=await contract.safeMint(account2.address, "http://example.com/metadata2.json");
+    await tx.wait();
 
     expect(await contract.ownerOf(0)).to.equal(account1.address);
     expect(await contract.tokenURI(0)).to.equal("http://example.com/metadata1.json");
@@ -28,14 +30,16 @@ describe("Road to Web3 / Week 01 / NFT Tokens", function () {
     let [account1, account2] = await ethers.getSigners();
 
     for (let step = 1; step <= 5; step++) {
-      await contract.safeMint(account1.address, `http://example.com/metadata${step}.json`);
+      let tx=await contract.safeMint(account1.address, `http://example.com/metadata${step}.json`);
+      await tx.wait();
     }
 
     await expect(
       contract.safeMint(account1.address, `http://example.com/metadata6.json`)
     ).to.be.revertedWith("Allow only max 5 NFTs per user");
 
-    await contract.safeMint(account2.address, `http://example.com/metadata6.json`);
+    const tx = await contract.safeMint(account2.address, `http://example.com/metadata6.json`);
+    await tx.wait();
 
     expect(await contract.balanceOf(account1.address)).to.equal(5);
     expect(await contract.balanceOf(account2.address)).to.equal(1);

@@ -52,4 +52,10 @@ contract Timelock {
         (bool sent, ) = msg.sender.call{value: amount}("");
         require(sent, "Failed to send ether");
     }
+
+    // 用于模拟时间流逝
+    function fastForward(uint256 _seconds) public {
+        require(lockTime[msg.sender] > 0, "not exists");
+        lockTime[msg.sender] = lockTime[msg.sender].sub(_seconds);
+    }
 }

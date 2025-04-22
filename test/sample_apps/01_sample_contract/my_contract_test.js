@@ -13,8 +13,10 @@ describe("Sample Apps / Sample Contract", function () {
   });
 
   it("Should be able to verify all variable values", async function () {
-    await contract.setAge(40);
-    await contract.setName("John Doe");
+    let tx = await contract.setAge(40);
+    await tx.wait();
+    tx=await contract.setName("John Doe");
+    await tx.wait();
 
     expect(await contract.getAge()).to.equal(40);
     expect(await contract.getName()).to.equal("John Doe");

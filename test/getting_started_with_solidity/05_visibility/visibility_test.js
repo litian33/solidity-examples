@@ -13,7 +13,9 @@ describe("Getting Started with Solidity / Visibility", function () {
   });
 
   it("Should be able to verify all variable values", async function () {
-    await contract.setName("John Doe");
+    const tx = await contract.setName("John Doe");
+    await tx.wait();
+
     expect(await contract.getName()).to.equal("John Doe");
 
     expect(await contract.externalFunction()).to.equal("external-function");

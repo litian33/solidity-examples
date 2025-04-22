@@ -18,14 +18,18 @@ describe("Sample Apps / Vault", async function () {
   const vaultContract = await VaultContract.deploy(tokenContract.address);
   await vaultContract.deployed();
 
-  await tokenContract.connect(deployer).mint(signer1.address, ethers.utils.parseEther("100"));
-  await tokenContract
+  let tx=await tokenContract.connect(deployer).mint(signer1.address, ethers.utils.parseEther("100"));
+  await tx.wait();
+  tx=await tokenContract
     .connect(signer1)
     .approve(vaultContract.address, ethers.utils.parseEther("100"));
-  await tokenContract.connect(deployer).mint(signer2.address, ethers.utils.parseEther("100"));
-  await tokenContract
+    await tx.wait();
+  tx=await tokenContract.connect(deployer).mint(signer2.address, ethers.utils.parseEther("100"));
+  await tx.wait();
+  tx=await tokenContract
     .connect(signer2)
     .approve(vaultContract.address, ethers.utils.parseEther("100"));
+  await tx.wait();
 
   it("is initialed deposit into the blank pool", async function () {
     await vaultContract.connect(signer1).deposit(ethers.utils.parseEther("10"));

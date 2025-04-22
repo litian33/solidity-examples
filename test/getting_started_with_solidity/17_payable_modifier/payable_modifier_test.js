@@ -18,11 +18,13 @@ describe("Getting Started with Solidity / Payable Modifier", function () {
   it("Should be able to verify all variable values", async function () {
     expect(await contract.provider.getBalance(contract.address)).to.equal(100);
 
-    await contract.withdraw(5);
+    var tx=await contract.withdraw(5);
+    await tx.wait();
     expect(await contract.provider.getBalance(contract.address)).to.equal(95);
 
     const balanceBeforeTransfer = await signer.getBalance();
-    await contract.transfer(signer.address, 10);
+    tx=await contract.transfer(signer.address, 10);
+    await tx.wait();
     expect(await contract.provider.getBalance(contract.address)).to.equal(85);
     expect(await signer.getBalance()).to.equal(balanceBeforeTransfer.add(10));
   });

@@ -14,15 +14,19 @@ describe("Getting Started with Solidity / Mapping / MyContract", function () {
 
   it("Should be able to verify all variable values", async function () {
     let [singer1, singer2, singer3] = await ethers.getSigners();
-    await contract.set(singer1.address, true);
-    await contract.set(singer2.address, false);
-    await contract.set(singer3.address, true);
+    var tx = await contract.set(singer1.address, true);
+    await tx.wait();
+    tx=await contract.set(singer2.address, false);
+    await tx.wait();
+    tx=await contract.set(singer3.address, true);
+    await tx.wait();
 
     expect(await contract.get(singer1.address)).to.equal(true);
     expect(await contract.get(singer2.address)).to.equal(false);
     expect(await contract.get(singer3.address)).to.equal(true);
 
-    await contract.remove(singer3.address);
+    tx=await contract.remove(singer3.address);
+    await tx.wait();
     expect(await contract.get(singer3.address)).to.equal(false); // fallback to the default value
   });
 });

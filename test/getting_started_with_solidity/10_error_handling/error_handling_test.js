@@ -13,8 +13,9 @@ describe("Getting Started with Solidity / Error Handling", function () {
   });
 
   it("Should be able to verify all variable values", async function () {
-    await contract.deposit(100);
+    const tx = await contract.deposit(3);
+    await tx.wait();
 
-    expect(await contract.balance()).to.equal(100);
+    expect(await contract.balance()).to.equal(3);
   });
 });

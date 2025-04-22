@@ -6,7 +6,7 @@ const { moveTime, moveBlocks, getLatestBlockTs } = require("./utils/test_helpers
 const TOKEN_ID_0 = 0;
 const TOKEN_ID_1 = 1;
 
-const UPDATE_INTERVAL_SEC = 60;
+const UPDATE_INTERVAL_SEC = 10;
 const DECIMALS = 8;
 const INITIAL_PRICE = 3000000000000;
 const CHECK_DATA = ethers.constants.HashZero;
@@ -63,7 +63,8 @@ describe("Road to Web3 / Week 05 / Dynamic NFTs", function () {
   });
 
   it("Should mint a new NFT token", async function () {
-    await contract.safeMint(accountOwner.address);
+    const tx=await contract.safeMint(accountOwner.address);
+    await tx.wait();
 
     expect(await contract.totalSupply()).to.eq(1);
     expect(await contract.ownerOf(TOKEN_ID_0)).to.equal(accountOwner.address);
@@ -95,7 +96,7 @@ describe("Road to Web3 / Week 05 / Dynamic NFTs", function () {
       expect(upkeepNeeded).to.be.false;
 
       // Fast forward less than update interval.
-      await moveTime(10);
+      await moveTime(UPDATE_INTERVAL_SEC-5);
       await moveBlocks(1);
       [upkeepNeeded] = await contract.checkUpkeep(CHECK_DATA);
       expect(upkeepNeeded).to.be.false;
@@ -108,7 +109,8 @@ describe("Road to Web3 / Week 05 / Dynamic NFTs", function () {
     });
 
     it("Should not run performUpkeep", async function () {
-      await contract.safeMint(accountOwner.address);
+      const tx=await contract.safeMint(accountOwner.address);
+      await tx.wait();
       const currentUri = await contract.tokenURI(TOKEN_ID_0);
 
       // No change in price.
@@ -122,12 +124,13 @@ describe("Road to Web3 / Week 05 / Dynamic NFTs", function () {
       await newPriceTx.wait();
 
       upkeepTx = await contract.performUpkeep(CHECK_DATA);
-      upkeepTx.wait();
+      await upkeepTx.wait();
       expect(await contract.tokenURI(TOKEN_ID_0)).to.equal(currentUri);
     });
 
     it("Should run performUpkeep", async function () {
-      await contract.safeMint(accountOwner.address);
+      const tx=await contract.safeMint(accountOwner.address);
+      await tx.wait();
       let lastUpkeepTs = (await contract.lastTimeStamp()).toNumber();
 
       await moveTime(UPDATE_INTERVAL_SEC + 1);
@@ -144,7 +147,11 @@ describe("Road to Web3 / Week 05 / Dynamic NFTs", function () {
   });
 
   it("Should update Token URIs on price changes", async function () {
-    await contract.safeMint(accountOwner.address);
+    // 这个用例耗时长
+    this.timeout(120000);
+
+    let tx=await contract.safeMint(accountOwner.address);
+    await tx.wait();
 
     // price decreases
     let newPrice = INITIAL_PRICE - 10000;
@@ -157,8 +164,8 @@ describe("Road to Web3 / Week 05 / Dynamic NFTs", function () {
 
     let upkeepTx = await contract.performUpkeep(CHECK_DATA);
     await upkeepTx.wait();
-    await vrfCoordinatorContract.fulfillRandomWords(1 /* request id */, contract.address);
-
+    let vrfTx = await vrfCoordinatorContract.fulfillRandomWords(1 /* request id */, contract.address);
+    await vrfTx.wait();
     expect(await contract.tokenURI(TOKEN_ID_0)).to.include("_bear.json");
 
     // price increases
@@ -172,8 +179,8 @@ describe("Road to Web3 / Week 05 / Dynamic NFTs", function () {
 
     upkeepTx = await contract.performUpkeep(CHECK_DATA);
     await upkeepTx.wait();
-    await vrfCoordinatorContract.fulfillRandomWords(2 /* request id */, contract.address);
-
+    vrfTx = await vrfCoordinatorContract.fulfillRandomWords(2 /* request id */, contract.address);
+    await vrfTx.wait();
     expect(await contract.tokenURI(TOKEN_ID_0)).to.include("_bull.json");
   });
 });

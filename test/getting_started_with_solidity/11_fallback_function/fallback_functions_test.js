@@ -16,10 +16,11 @@ describe("Getting Started with Solidity / Fallback Function", function () {
   });
 
   it("Should be able to verify all variable values", async function () {
-    await owner.sendTransaction({
+    const tx = await owner.sendTransaction({
       to: contract.address,
       value: ethers.utils.parseEther("1.0"),
     });
+    await tx.wait();
 
     expect(await contract.provider.getBalance(contract.address)).to.equal(
       ethers.utils.parseEther("1.0")

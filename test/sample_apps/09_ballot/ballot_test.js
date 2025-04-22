@@ -22,8 +22,8 @@ describe("Sample Apps / Ballot", function () {
   it("should be only chairperson to allow others to vote", async function () {
     const [account1, account2] = signers;
 
-    await contract.giveRightToVote(account1.address);
-
+    let tx=await contract.giveRightToVote(account1.address);
+    await tx.wait();
     await expect(contract.connect(account1).giveRightToVote(account2.address)).to.be.revertedWith(
       "Only chairperson can give right to vote."
     );
@@ -32,21 +32,26 @@ describe("Sample Apps / Ballot", function () {
   it("should only allow to vote by chairperson", async function () {
     const [publicAccount, allowedAccount] = signers;
 
-    await contract.giveRightToVote(allowedAccount.address);
+    let tx=await contract.giveRightToVote(allowedAccount.address);
+    await tx.wait();
 
-    await expect(contract.connect(allowedAccount).vote(proposals.indexOf("Apple"))).to.be.not
-      .reverted;
+    tx=await contract.connect(allowedAccount).vote(proposals.indexOf("Apple"));
+    await tx.wait();
+    // await expect(contract.connect(allowedAccount).vote(proposals.indexOf("Apple"))).to.be.not
+    //   .reverted;
 
     await expect(
-      contract.connect(publicAccount).vote(proposals.indexOf("Apple"))
+       contract.connect(publicAccount).vote(proposals.indexOf("Apple"))
     ).to.be.revertedWith("Has no right to vote.");
   });
 
   it("should only vote only once", async function () {
     const account = signers[0];
 
-    await contract.giveRightToVote(account.address);
-    await contract.connect(account).vote(proposals.indexOf("Apple"));
+    let tx=await contract.giveRightToVote(account.address);
+    await tx.wait();
+    tx=await contract.connect(account).vote(proposals.indexOf("Apple"));
+    await tx.wait();
 
     await expect(contract.connect(account).vote(proposals.indexOf("Apple"))).to.be.revertedWith(
       "Already voted."
@@ -56,25 +61,36 @@ describe("Sample Apps / Ballot", function () {
   it("should be able to delegate vote", async function () {
     const [votedAccount, delegator, delegatee] = signers;
 
-    await contract.giveRightToVote(votedAccount.address);
-    await contract.giveRightToVote(delegator.address);
-    await contract.giveRightToVote(delegatee.address);
+    let tx=await contract.giveRightToVote(votedAccount.address);
+    await tx.wait();
+    tx=await contract.giveRightToVote(delegator.address);
+    await tx.wait();
+    tx=await contract.giveRightToVote(delegatee.address);
+    await tx.wait();
 
-    await contract.connect(votedAccount).vote(proposals.indexOf("Apple"));
-
+    tx=await contract.connect(votedAccount).vote(proposals.indexOf("Apple"));
+    await tx.wait();
     await expect(contract.connect(votedAccount).delegate(delegatee.address)).to.be.revertedWith(
       "You already voted."
     );
 
-    await expect(contract.connect(delegator).delegate(delegatee.address)).to.be.not.reverted;
+    tx=await contract.connect(delegator).delegate(delegatee.address)
+    await tx.wait();
+    // await expect(contract.connect(delegator).delegate(delegatee.address)).to.be.not.reverted;
   });
 
   it("should be able to return winner name of proposals", async function () {
-    await signers.forEach((s) => contract.giveRightToVote(s.address));
+    for (const signer of signers) {
+      let tx=await contract.giveRightToVote(signer.address);
+      await tx.wait();
+    }
 
-    contract.connect(signers[0]).delegate(signers[1].address);
-    await contract.connect(signers[1]).vote(proposals.indexOf("Apple"));
-    await contract.connect(signers[2]).vote(proposals.indexOf("Banana"));
+    let tx=await contract.connect(signers[0]).delegate(signers[1].address);
+    await tx.wait();
+    tx=await contract.connect(signers[1]).vote(proposals.indexOf("Apple"));
+    await tx.wait();
+    tx=await contract.connect(signers[2]).vote(proposals.indexOf("Banana"));
+    await tx.wait();
 
     expect(await contract.winnerName()).to.equal(toBytes32("Apple"));
   });

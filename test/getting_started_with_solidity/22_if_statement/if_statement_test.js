@@ -13,10 +13,12 @@ describe("Getting Started with Solidity / If Statement", function () {
   });
 
   it("Should be able to verify all variable values", async function () {
-    await contract.symbolNum(1);
+    var tx=await contract.symbolNum(1);
+    await tx.wait();
     expect(await contract.symbol()).to.equal("BTC");
 
-    await contract.symbolNum(2);
+    tx=await contract.symbolNum(2);
+    await tx.wait();
     expect(await contract.symbol()).to.equal("ETH");
   });
 });

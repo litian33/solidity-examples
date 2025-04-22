@@ -20,7 +20,8 @@ describe("Getting Started with Solidity / Interface", function () {
     expect(await contract.balanceOf(owner.address)).to.equal(ethers.utils.parseEther("10"));
     expect(await contract.balanceOf(anotherAccount.address)).to.equal(0);
 
-    await contract.transfer(anotherAccount.address, ethers.utils.parseEther("1"));
+    const tx=await contract.transfer(anotherAccount.address, ethers.utils.parseEther("1"));
+    await tx.wait();
 
     expect(await contract.balanceOf(owner.address)).to.equal(ethers.utils.parseEther("9"));
     expect(await contract.balanceOf(anotherAccount.address)).to.equal(ethers.utils.parseEther("1"));

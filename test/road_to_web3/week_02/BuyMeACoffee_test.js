@@ -16,7 +16,8 @@ describe("Road to Web3 / Week 02 / Buy Me A Coffee", function () {
 
   it("Should be able to give a tip to the owner", async function () {
     const tip = { value: ethers.utils.parseEther("1") };
-    await contract.connect(tipper).buyCoffee("John Doe", "You're the best!", tip);
+    const tx=await contract.connect(tipper).buyCoffee("John Doe", "You're the best!", tip);
+    await tx.wait();
 
     expect(await contract.provider.getBalance(contract.address)).to.equal(
       ethers.utils.parseEther("1")
@@ -25,9 +26,11 @@ describe("Road to Web3 / Week 02 / Buy Me A Coffee", function () {
 
   it("Should be able to withdraw", async function () {
     const tip = { value: ethers.utils.parseEther("1") };
-    await contract.connect(tipper).buyCoffee("John Doe", "You're the best!", tip);
+    var tx=await contract.connect(tipper).buyCoffee("John Doe", "You're the best!", tip);
+    await tx.wait();
 
-    await contract.withdrawTips();
+    tx=await contract.withdrawTips();
+    await tx.wait();
 
     expect(await contract.provider.getBalance(contract.address)).to.equal(0);
   });
@@ -40,7 +43,8 @@ describe("Road to Web3 / Week 02 / Buy Me A Coffee", function () {
     await expect(contract.connect(tipper).changeOwner(newOwner.address)).to.be.revertedWith(
       "Not the owner"
     );
-    await contract.changeOwner(newOwner.address);
+    const tx=await contract.changeOwner(newOwner.address);
+    await tx.wait();
 
     expect(await contract.owner()).to.equal(newOwner.address);
   });

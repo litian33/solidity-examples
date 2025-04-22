@@ -7,6 +7,7 @@ describe("Getting Started with Solidity / Function Modifiers", function () {
 
   beforeEach(async () => {
     [owner, signer] = await ethers.getSigners();
+  
     const Contract = await ethers.getContractFactory(
       "contracts/getting_started_with_solidity/07_function_modifiers/MyContract.sol:MyContract",
       owner
@@ -16,7 +17,9 @@ describe("Getting Started with Solidity / Function Modifiers", function () {
   });
 
   it("Should be able to verify all variable values", async function () {
-    await contract.setName("John Doe");
+    const tx = await contract.setName("John Doe");
+    await tx.wait();
+
     expect(await contract.getName()).to.equal("John Doe");
 
     await expect(contract.connect(signer).setName("Failed")).to.be.revertedWith("Not owner");

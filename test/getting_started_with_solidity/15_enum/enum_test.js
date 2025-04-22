@@ -15,7 +15,8 @@ describe("Getting Started with Solidity / Enum", function () {
   it("Should be able to verify all variable values", async function () {
     expect(await contract.status()).to.equal(0);
 
-    await contract.ship();
+    const tx=await contract.ship();
+    await tx.wait();
     expect(await contract.status()).to.equal(1);
   });
 });

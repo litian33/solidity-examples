@@ -13,10 +13,12 @@ describe("Getting Started with Solidity / For Loop", function () {
   });
 
   it("Should be able to verify all variable values", async function () {
-    await contract.doLoop(2);
+    var tx = await contract.doLoop(2);
+    await tx.wait();
     expect(await contract.loopCount()).to.equal(2);
 
-    await contract.doLoop(3);
+    tx = await contract.doLoop(3);
+    await tx.wait();
     expect(await contract.loopCount()).to.equal(5);
   });
 });

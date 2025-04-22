@@ -13,9 +13,11 @@ describe("Getting Started with Solidity / Functions", function () {
   });
 
   it("Should be able to verify all variable values", async function () {
-    expect(await contract.getName()).to.equal("");
+    const defaultVal = await contract.getName();
+    expect(defaultVal).to.equal("");
 
-    await contract.setName("Hello Functions");
+    const tx = await contract.setName("Hello Functions");
+    await tx.wait();
     expect(await contract.getName()).to.equal("Hello Functions");
   });
 });

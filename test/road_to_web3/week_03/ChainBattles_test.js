@@ -25,7 +25,8 @@ describe("Road to Web3 / Week 03 / NFTs with On-Chain Metadata", function () {
   });
 
   it("Should be able to train", async function () {
-    await contract.connect(minter).mint();
+    const tx=await contract.connect(minter).mint();
+    await tx.wait();
 
     newMintedTokenId = 1;
     const txn = await contract.connect(minter).train(newMintedTokenId);

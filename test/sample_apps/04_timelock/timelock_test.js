@@ -16,7 +16,8 @@ describe("Sample Apps / Timelock", function () {
   });
 
   it("Should be able to verify all variable values", async function () {
-    await contract.connect(signer1).deposit({ value: ethers.utils.parseEther("1") });
+    let tx=await contract.connect(signer1).deposit({ value: ethers.utils.parseEther("1") });
+    await tx.wait();
 
     expect(await contract.balances(signer1.address)).to.equal(ethers.utils.parseEther("1"));
     expect(await contract.balances(signer2.address)).to.equal(0);
@@ -25,9 +26,17 @@ describe("Sample Apps / Timelock", function () {
       "lock time has not expired"
     );
 
-    await network.provider.send("evm_increaseTime", [604800]); // fast forward in 604800 seconds (a week)
+    if (ethers.name === "hardhat") {
+      tx=await network.provider.send("evm_increaseTime", [604800]); // fast forward in 604800 seconds (a week)
+      await tx.wait();
+    } else {
+      tx=await contract.connect(signer1).fastForward(604800);
+      await tx.wait();
+    }
+    
 
-    await contract.connect(signer1).withdraw();
+    tx=await contract.connect(signer1).withdraw();
+    await tx.wait();
     expect(await contract.balances(signer1.address)).to.equal(0);
   });
 });

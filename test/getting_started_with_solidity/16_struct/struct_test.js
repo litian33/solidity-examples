@@ -13,7 +13,8 @@ describe("Getting Started with Solidity / Struct", function () {
   });
 
   it("Should be able to verify all variable values", async function () {
-    await contract.create("Smart Contract is awesome!");
+    const tx = await contract.create("Smart Contract is awesome!");
+    await tx.wait();
 
     let [text, completed] = await contract.get(0);
     expect(text).to.equal("Smart Contract is awesome!");
