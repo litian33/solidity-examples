@@ -29,10 +29,13 @@ describe("Sample Apps / FlashLender", async function () {
     const loanAmount = 10000;
     const poolBalance = 50000;
     const fee = await lenderContract.flashFee(WETHContract.address, loanAmount);
-    await WETHContract.mint(borrowerContract.address, fee);
-    await WETHContract.mint(lenderContract.address, poolBalance);
+    let tx=await WETHContract.mint(borrowerContract.address, fee);
+    await tx.wait();
+    tx=await WETHContract.mint(lenderContract.address, poolBalance);
+    await tx.wait();
 
-    await borrowerContract.connect(account1).flashBorrow(WETHContract.address, loanAmount);
+    tx=await borrowerContract.connect(account1).flashBorrow(WETHContract.address, loanAmount);
+    await tx.wait();
 
     expect(await WETHContract.balanceOf(borrowerContract.address)).to.eq(0);
     expect(await WETHContract.balanceOf(lenderContract.address)).to.eq(poolBalance + Number(fee));

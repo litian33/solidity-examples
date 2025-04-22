@@ -38,11 +38,13 @@ describe.skip("Sample Apps / Uniswap SimpleSwap", function () {
 
     /* Check Initial DAI Balance */
     const DAI = new ethers.Contract(DAI_ADDRESS, ercAbi, signers[0]);
+    // 不是标准节点，没有dai合约，忽略
     const expandedDAIBalanceBefore = await DAI.balanceOf(signers[0].address);
     const DAIBalanceBefore = Number(ethers.utils.formatUnits(expandedDAIBalanceBefore));
 
     /* Approve the swapper contract to spend weth9 for me */
-    await WETH.approve(simpleSwap.address, ethers.utils.parseEther("1"));
+    let tx=await WETH.approve(simpleSwap.address, ethers.utils.parseEther("1"));
+    await tx.wait();
 
     /* Execute the swap */
     const amountIn = ethers.utils.parseEther("0.1");

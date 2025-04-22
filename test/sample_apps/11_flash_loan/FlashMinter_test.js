@@ -21,10 +21,11 @@ describe("Sample Apps / FlashMinter", async function () {
   it("creates a flash loan", async () => {
     const loanAmount = 10000;
     const fee = await lenderContract.flashFee(lenderContract.address, loanAmount);
-    await lenderContract.mint(borrowerContract.address, fee);
+    let tx=await lenderContract.mint(borrowerContract.address, fee);
+    await tx.wait();
 
-    await borrowerContract.connect(account1).flashBorrow(lenderContract.address, loanAmount);
-
+    tx=await borrowerContract.connect(account1).flashBorrow(lenderContract.address, loanAmount);
+    await tx.wait();
     expect(await lenderContract.balanceOf(borrowerContract.address)).to.eq(0);
   });
 
