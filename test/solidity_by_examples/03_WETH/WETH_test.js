@@ -15,7 +15,8 @@ describe("Solidity By Examples / Wrapped ETH (WETH)", function () {
   it("Should be able to deposit ETH to mint WETH", async function () {
     let [account] = await ethers.getSigners();
 
-    await contract.connect(account).deposit({ value: ethers.utils.parseEther("1") });
+    let tx=await contract.connect(account).deposit({ value: ethers.utils.parseEther("1") });
+    await tx.wait();
 
     // WETH balance
     expect(await contract.balanceOf(account.address)).to.eq(ethers.utils.parseEther("1"));
@@ -32,20 +33,22 @@ describe("Solidity By Examples / Wrapped ETH (WETH)", function () {
   it("Should be able to send ETH directly to the contract", async function () {
     let [account] = await ethers.getSigners();
 
-    await account.sendTransaction({
+    let tx=await account.sendTransaction({
       to: contract.address,
       value: ethers.utils.parseEther("1"),
     });
+    await tx.wait();
 
     expect(await contract.balanceOf(account.address)).to.eq(ethers.utils.parseEther("1"));
   });
 
   it("Should be able to return WETH to withdraw ETH", async function () {
     let [account] = await ethers.getSigners();
-    await account.sendTransaction({
+    let tx=await account.sendTransaction({
       to: contract.address,
       value: ethers.utils.parseEther("10"),
     });
+    await tx.wait();
 
     let ethBalanceBeforeWithdrawal = await account.getBalance();
     const txn = await contract.connect(account).withdraw(ethers.utils.parseEther("6"));

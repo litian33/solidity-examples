@@ -20,7 +20,8 @@ describe("Solidity By Examples / Ether Wallet", function () {
       contract.connect(otherSigner).withdraw(ethers.utils.parseEther("0.5"))
     ).to.be.revertedWith("caller is not owner");
 
-    await contract.withdraw(ethers.utils.parseEther("0.5"));
+    let tx=await contract.withdraw(ethers.utils.parseEther("0.5"));
+    await tx.wait();
     expect(await contract.getBalance()).to.equal(ethers.utils.parseEther("0.5"));
   });
 });

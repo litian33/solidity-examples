@@ -39,9 +39,10 @@ describe("Solidity By Examples / Multi Sig Wallet", function () {
   });
 
   it("Should allow only owners to be able to confirm transactions", async function () {
-    await contract
+    let tx=await contract
       .connect(owner1)
       .submitTransaction(otherSigner.address, 100, ethers.constants.HashZero);
+    await tx.wait();
 
     await expect(contract.connect(otherSigner).confirmTransaction(0)).to.be.revertedWith(
       "not owner"
@@ -51,8 +52,8 @@ describe("Solidity By Examples / Multi Sig Wallet", function () {
       "tx does not exist"
     );
 
-    await contract.connect(owner1).confirmTransaction(0);
-
+    tx=await contract.connect(owner1).confirmTransaction(0);
+    await tx.wait();
     await expect(contract.connect(owner1).confirmTransaction(0)).to.be.revertedWith(
       "tx already confirmed"
     );
@@ -68,16 +69,19 @@ describe("Solidity By Examples / Multi Sig Wallet", function () {
       .to.emit(contract, "Deposit")
       .withArgs(owner1.address, 100, 100);
 
-    await contract
+    let tx=await contract
       .connect(owner1)
       .submitTransaction(otherSigner.address, 100, ethers.constants.HashZero);
-    await contract.connect(owner1).confirmTransaction(0);
+    await tx.wait();
+    tx = await contract.connect(owner1).confirmTransaction(0);
+    await tx.wait();
 
     await expect(contract.connect(owner1).executeTransaction(0)).to.be.revertedWith(
       "cannot execute tx"
     );
 
-    await contract.connect(owner2).confirmTransaction(0);
+    tx=await contract.connect(owner2).confirmTransaction(0);
+    await tx.wait();
     await expect(contract.connect(owner1).executeTransaction(0))
       .to.emit(contract, "ExecuteTransaction")
       .withArgs(owner1.address, 0);
