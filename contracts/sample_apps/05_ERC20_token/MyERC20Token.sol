@@ -121,7 +121,7 @@ contract MyERC20Token is ERC20 {
     }
 
     // shows how much a spender has the approval to spend to a specific address
-    function allowance(address _owner, address _spender) external view returns (uint256 remaining) {
+    function allowance(address _owner, address _spender) override external view returns (uint256 remaining) {
         return __allowances[_owner][_spender];
     }
 }

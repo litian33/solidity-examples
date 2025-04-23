@@ -2,7 +2,7 @@
 //
 // https://cryptomarketpool.com/data-types-in-solidity-smart-contracts/
 
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.0;
 
 contract SolidityOperatorExample {
     uint256 public variable_add = 70;

@@ -33,11 +33,11 @@ contract Bank is Regulator {
         return value;
     }
 
-    function checkValue(uint256 amount) public view returns (bool) {
+    function checkValue(uint256 amount) override public view returns (bool) {
         return amount >= value;
     }
 
-    function loan() public view returns (bool) {
+    function loan() override public view returns (bool) {
         return value > 0;
     }
 }

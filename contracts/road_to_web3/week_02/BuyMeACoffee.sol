@@ -2,7 +2,7 @@
 //
 // https://docs.alchemy.com/docs/how-to-build-buy-me-a-coffee-defi-dapp
 
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.0;
 
 contract BuyMeACoffee {
     event NewMemo(address indexed from, uint256 timestamp, string name, string message);

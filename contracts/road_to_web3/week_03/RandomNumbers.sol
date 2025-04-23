@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.0;
 
 contract RandomNumbers {
     function getRandomNumber() public view returns (uint256) {
