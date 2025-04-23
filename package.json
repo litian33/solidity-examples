@@ -3,7 +3,13 @@
   "version": "1.0.0",
   "description": "Collection of Solidity Examples",
   "scripts": {
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "compile:0.8.28": "hardhat compile --config hardhat.config.0.8.28.js",
+    "compile:0.8.23": "Shardhat compile --config hardhat.config.0.8.23.js",
+    "compile:0.8.19": "hardhat compile --config hardhat.config.0.8.19.js",
+    "compile:0.8.17": "hardhat compile --config hardhat.config.0.8.17.js",
+    "compile:0.8.6": "hardhat compile --config hardhat.config.0.8.6.js",
+    "compile:0.7.6": "hardhat compile --config hardhat.config.0.7.6.js"
   },
   "keywords": [
     "Solidity",
